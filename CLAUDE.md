@@ -80,3 +80,8 @@ Points de coupe repérés dans les clips de nuit (temps dans la source) :
 - Avant tout rendu complet : une planche d'aperçu avec une image par temps (toutes les 12 images), à montrer à Amar.
 - Ne jamais présenter un défaut comme réglé sans l'avoir vu sur une image extraite.
 - Garder les rendus dans `rendus/`, versionnés (`film_eclairage_v3.mp4`, …).
+
+## Skills installés (`.claude/skills/`, versions dans `skills-lock.json`)
+- **video-use** (browser-use/video-use) et les **21 skills HyperFrames** (heygen-com/hyperframes), installés à la demande d'Amar le 14 octobre 2026 avec `npx skills add … --agent claude-code`. Mise à jour : `npx skills update -p`.
+- Ce fichier prime sur leurs consignes : rendus dans `rendus/` (pas `edit/`), charte et grille de 12 images inchangées, chaîne de montage Python actuelle conservée sauf si Amar demande de passer une séquence en HyperFrames.
+- video-use n'a besoin d'une clé ElevenLabs que pour transcrire de la parole : le film n'en a pas. Dépendances Python (librosa, matplotlib) à réinstaller dans chaque nouvel environnement cloud : `pip install requests librosa matplotlib`. HyperFrames s'exécute avec `npx --yes hyperframes …` (Node 22).
