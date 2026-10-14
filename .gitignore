@@ -8,3 +8,5 @@ sources/*.MP4
 sources/*.MOV
 # vidéos intermédiaires des scripts de montage (lourdes, reproductibles)
 rendus/*_video.mp4
+# masters pleine qualité (> 100 Mo, refaits par les scripts) : seule la copie de visionnage est versionnée
+rendus/*_master.mp4
