@@ -16,7 +16,7 @@ Contexte du projet pour Claude Code. Lis ce fichier en entier avant toute action
 | Montage V2 (53 s, 27 coupes sur 120 BPM) | ✅ livré | `film_eclairage_v2.mp4` (racine du dossier), script `scripts/montage_v2.py` |
 | Piste son provisoire générée par code | ✅ | `son/v2_son.wav`, script `scripts/son_v2.py` |
 | Ouverture, séquence 1 : globe → Ouagadougou (6 s) | ✅ | `rendus/ouverture_globe.mp4`, script `ouverture/render_globe.py` |
-| Ouverture, séquence 2 : circuits (9 s) | ⏳ planche faite sur une capture provisoire (trop petite) ; rendu en attente d'une capture plus large | `ouverture/render_circuits.py`, fond calé par `ouverture/caler_fond.py`, géométrie `ouverture/circuits.py`, chiffres `chiffres_circuits.json` |
+| Ouverture, séquence 2 : circuits (9 s) | ⏳ planche faite sur une capture provisoire (bon cadrage, mais reçue en 1024 px par le chat : trop floue) ; rendu en attente de la capture en pleine résolution | `ouverture/render_circuits.py`, fond calé par `ouverture/caler_fond.py`, géométrie `ouverture/circuits.py`, chiffres `chiffres_circuits.json` |
 | 5 gros plans produit à caméra fixe + 1 plan de vie | ⏳ à générer dans Magnific | voir « À produire » |
 | Montage V3 (nouvelle structure ci-dessous) | ⏳ planche faite, rendu complet en attente de la séquence 2 | `scripts/montage_v3.py` |
 

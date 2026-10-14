@@ -30,6 +30,8 @@ red = (A[..., 0] > 150) & (A[..., 1] < 100) & (A[..., 2] < 100) & (np.abs(A - B)
 ry, rx = np.nonzero(red)
 P = np.stack([rx, ry], 1).astype(float)
 print(f"capture {w}x{h} ; {len(P)} pixels de tracé rouge")
+if len(P) > 20000:                       # capture en pleine résolution : un pixel sur k suffit au calage
+    P = P[::int(np.ceil(len(P) / 20000))]
 if len(P) < 200:
     sys.exit("trop peu de pixels rouges : les tracés sont-ils bien affichés sur la première capture ?")
 
@@ -56,9 +58,9 @@ weight = np.concatenate([np.full(len(densify(l, 10)), 1.0 / n) for n, lines in
 def nearest(M):
     Q = np.c_[G, np.ones(len(G))] @ M
     idx = np.empty(len(Q), int); dist = np.empty(len(Q))
-    for k in range(0, len(Q), 512):
-        d = ((Q[k:k + 512, None, :] - P[None, :, :]) ** 2).sum(-1)
-        idx[k:k + 512] = d.argmin(1); dist[k:k + 512] = np.sqrt(d.min(1))
+    for k in range(0, len(Q), 128):
+        d = ((Q[k:k + 128, None, :] - P[None, :, :]) ** 2).sum(-1)
+        idx[k:k + 128] = d.argmin(1); dist[k:k + 128] = np.sqrt(d.min(1))
     return idx, dist
 for seuil in (80, 50, 30, 20, 12, 8, 5, 3):
     for it in range(15):
@@ -77,8 +79,10 @@ print(f"calage : écart médian {np.median(dist):.2f} px, 95 % sous {np.percenti
 ax, ay = M[0], M[1]          # dérivées de (x, y) par rapport à lon et à lat
 rot_lon = np.degrees(np.arctan2(ax[1], ax[0])); rot_lat = np.degrees(np.arctan2(ay[0], -ay[1]))
 print(f"rotation de la vue : {rot_lon:.2f}° (axe est-ouest), {rot_lat:.2f}° (axe nord-sud)")
-if abs(rot_lon - rot_lat) > 0.3:
-    sys.exit("les deux axes ne tournent pas d'autant : vue inclinée ? Remettre la vue à plat (touche U) et refaire les captures")
+# Une vue inclinée déforme l'image en trapèze, ce qu'une affine ne rattrape pas : l'écart de calage
+# grandit alors. Tant qu'il reste faible, l'affine corrige aussi le léger cisaillement.
+if dist.max() > 3:
+    sys.exit("calage imprécis (écart > 3 px) : vue inclinée ? Remettre la vue à plat (touche U) et refaire les captures")
 
 # On redresse la capture nord en haut : la plus grande emprise lon/lat contenue dans l'image,
 # rééchantillonnée à la même résolution. Chaque pixel de sortie va chercher son pixel source par M.
