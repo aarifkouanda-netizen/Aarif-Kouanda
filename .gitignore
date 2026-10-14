@@ -6,3 +6,5 @@ sources/*.mp4
 sources/*.mov
 sources/*.MP4
 sources/*.MOV
+# vidéos intermédiaires des scripts de montage (lourdes, reproductibles)
+rendus/*_video.mp4
