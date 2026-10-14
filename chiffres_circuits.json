@@ -1,0 +1,17 @@
+{
+  "circuit_1": {
+    "longueur_km": 7.2,
+    "mesure_km": 7.17,
+    "source": "circuits/tracé 1.kmz, longueur haversine"
+  },
+  "circuit_2": {
+    "longueur_km": 4.2,
+    "mesure_km": 4.18,
+    "dont_anneau_km": 1.9,
+    "anneau_eclaire": true,
+    "source": "circuits/2ème trajet.kmz : axe de chaque avenue compté une fois, plus l'anneau du Monument des Héros nationaux (cercle de 299 m de rayon). Lampadaires sur l'anneau confirmés par Amar le 14 octobre 2026."
+  },
+  "total_km": 11.4,
+  "lampadaires": null,
+  "note": "Valeurs affichées : longueur_km (1 décimale). Nombre de lampadaires inconnu : ne jamais l'afficher tant qu'il n'est pas fourni."
+}

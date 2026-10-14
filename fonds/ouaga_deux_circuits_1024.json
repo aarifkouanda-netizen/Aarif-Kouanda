@@ -1,0 +1,14 @@
+{
+  "nord": 12.381089,
+  "sud": 12.2951182,
+  "est": -1.4304483,
+  "ouest": -1.5517559,
+  "largeur_px": 1012,
+  "hauteur_px": 755,
+  "calage": {
+    "ecart_median_px": 0.4,
+    "ecart_max_px": 1.6,
+    "rotation_corrigee_deg": -0.733,
+    "source": "4.jpg (tracés rouges) ajusté sur circuits/*.kmz, 5.jpg redressée"
+  }
+}

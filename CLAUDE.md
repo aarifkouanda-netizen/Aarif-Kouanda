@@ -15,9 +15,10 @@ Contexte du projet pour Claude Code. Lis ce fichier en entier avant toute action
 | Carte de synthèse des deux circuits (fond satellite, 10 s) | ✅ validée | `cartes/plan7_synthese_v3.mp4` |
 | Montage V2 (53 s, 27 coupes sur 120 BPM) | ✅ livré | `film_eclairage_v2.mp4` (racine du dossier), script `scripts/montage_v2.py` |
 | Piste son provisoire générée par code | ✅ | `son/v2_son.wav`, script `scripts/son_v2.py` |
-| Ouverture globe → Ouagadougou → circuits | ⏳ à faire | prompt : `docs/PROMPT_claude_code_globe.md` |
+| Ouverture, séquence 1 : globe → Ouagadougou (6 s) | ✅ | `rendus/ouverture_globe.mp4`, script `ouverture/render_globe.py` |
+| Ouverture, séquence 2 : circuits (9 s) | ⏳ planche faite sur une capture provisoire (trop petite) ; rendu en attente d'une capture plus large | `ouverture/render_circuits.py`, fond calé par `ouverture/caler_fond.py`, géométrie `ouverture/circuits.py`, chiffres `chiffres_circuits.json` |
 | 5 gros plans produit à caméra fixe + 1 plan de vie | ⏳ à générer dans Magnific | voir « À produire » |
-| Montage V3 (nouvelle structure ci-dessous) | ⏳ à faire | — |
+| Montage V3 (nouvelle structure ci-dessous) | ⏳ planche faite, rendu complet en attente de la séquence 2 | `scripts/montage_v3.py` |
 
 Correspondance des segments :
 - **C1-S1** : avenue aux drapeaux (grands arbres, haie sur le terre-plein, panneau OMS). Les drapeaux et la haie ont disparu dans la version IA.
@@ -25,14 +26,14 @@ Correspondance des segments :
 - **C1-S3** : boulevard Capitaine Thomas Sankara, ligne droite, palmiers sur le terre-plein.
 - **C2-S1** : Ouaga 2000, avenue vers le Monument des Héros nationaux (monument dans l'axe).
 
-Rushes d'origine (de jour, tournés au téléphone en voiture) à placer dans `sources/` sous ces noms exacts, car `montage_v2.py` les lit :
+Rushes d'origine (de jour, tournés au téléphone en voiture) à placer dans `sources/` sous ces noms exacts, car `montage_v2.py` les lit. Ils dépassent 100 Mo : ils ne sont pas dans le dépôt Git mais dans la release GitHub « Rushes » (`https://github.com/aarifkouanda-netizen/Aarif-Kouanda/releases/download/Rushes/<nom du fichier>`).
 - `Ensemble_1_-_2_minutes_-_version_nettoyee.mp4` (circuit 1, 1920×584, 30 i/s, sans son)
 - `Circuit_complet_-_1_min_30_-_variations_de_vitesse.mp4` (circuit 2, 1396×584, 30 i/s, avec des rampes de vitesse)
 Recadrage 16:9 utilisé : circuit 1 `crop=1038:584:371:0`, circuit 2 `crop=1038:584:180:0`.
 
 ## Chiffres (ne jamais en inventer)
 - Circuit 1 : **7,2 km**. Circuit 2 : **4,2 km**, dont environ 1,9 km d'anneau autour du monument. Total : **11,4 km**.
-- ⚠️ **Question ouverte** : y a-t-il des lampadaires sur l'anneau du rond-point ? Si non, le circuit 2 fait environ 2,3 km et le total environ 9,5 km : mettre à jour `chiffres_circuits.json` et tous les textes.
+- Anneau du rond-point : **il porte des lampadaires** (confirmé par Amar le 14 octobre 2026). Les 4,2 km du circuit 2 et les 11,4 km du total sont donc définitifs.
 - Nombre de lampadaires : **inconnu**. Ne jamais l'afficher tant qu'il n'est pas fourni.
 - Fiche produit (catalogue fournisseur) : mât acier galvanisé 10 à 12 m, portée totale des crosses 4,5 m, socle ajouré éclairé 1,3 m, motif découpé au laser et rétroéclairé LED, pose sur terre-plein central. La page du catalogue ne doit jamais apparaître à l'écran.
 
@@ -71,7 +72,6 @@ Points de coupe repérés dans les clips de nuit (temps dans la source) :
 - Règles apprises : plaque, images clés et sortie **au même format (16:9) et à la même durée** ; pixels carrés ; prompt Kling/Seedance de 2 500 caractères maximum ; **Seedance** tient le dessin du produit, pas Kling.
 
 ## Encore attendu d'Amar
-- La réponse sur l'anneau du rond-point (voir Chiffres).
 - Le nom du maître d'ouvrage et les logos (le carton de fin affiche aujourd'hui un emplacement entre crochets).
 - La musique définitive, libre de droits, et environ 3 min d'ambiance de rue de nuit enregistrées au téléphone.
 - Les rushes du circuit 2 à vitesse normale, sans rampes.
