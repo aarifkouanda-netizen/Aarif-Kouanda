@@ -1,3 +1,8 @@
 node_modules/
 rendus/apercus/
 __pycache__/
+# rushes trop lourds pour le dépôt : ils passent par la release « rushes »
+sources/*.mp4
+sources/*.mov
+sources/*.MP4
+sources/*.MOV
