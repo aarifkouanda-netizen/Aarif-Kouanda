@@ -1,0 +1,107 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<title>Ouverture : globe</title>
+<style>
+  html, body { margin: 0; width: 1920px; height: 1080px; overflow: hidden; background: #383E42; }
+  svg { display: block; }
+  .label { font-family: Inter; font-weight: 600; letter-spacing: 0.06em; fill: #F0F0EC; }
+</style>
+</head>
+<body>
+<svg id="s" width="1920" height="1080" viewBox="0 0 1920 1080">
+  <path id="sphere" fill="#383E42" stroke="#A5A5A5" stroke-opacity="0.22" stroke-width="1.2"/>
+  <path id="grat" fill="none" stroke="#A5A5A5" stroke-opacity="0.08" stroke-width="1"/>
+  <path id="land" fill="#464D52"/>
+  <path id="borders" fill="none" stroke="#A5A5A5" stroke-opacity="0.55" stroke-width="1.1" stroke-linejoin="round"/>
+  <path id="bf" fill="none" stroke="none" stroke-width="2.4" stroke-linejoin="round"/>
+  <circle id="dot" r="9" fill="#F9A800" visibility="hidden"/>
+  <text id="lbf" class="label" font-size="44" visibility="hidden">BURKINA FASO</text>
+  <text id="louaga" class="label" font-size="40" text-anchor="middle" visibility="hidden">OUAGADOUGOU</text>
+</svg>
+<script>
+// Every frame is computed from t alone: seek(t) is the only entry point (no CSS animation, no timer).
+const W = 1920, H = 1080, FPS = 24;
+const OUAGA = [-1.5197, 12.3714];               // lon, lat
+const START = [35, 22];                          // centre of the first frame (East Africa / Red Sea)
+const R0 = 320, R3 = 950, R5 = 14000, R6 = 21000;
+let world = null, bfFeature = null;
+
+const clamp01 = x => Math.max(0, Math.min(1, x));
+const easeInOutCubic = x => x < 0.5 ? 4 * x * x * x : 1 - Math.pow(-2 * x + 2, 3) / 2;
+const easeOutCubic = x => 1 - Math.pow(1 - x, 3);
+// cubic Hermite between (t0, y0, slope m0) and (t1, y1, slope m1)
+function hermite(t, t0, y0, m0, t1, y1, m1) {
+  const h = t1 - t0, u = (t - t0) / h, u2 = u * u, u3 = u2 * u;
+  return (2*u3 - 3*u2 + 1) * y0 + (u3 - 2*u2 + u) * h * m0 + (-2*u3 + 3*u2) * y1 + (u3 - u2) * h * m1;
+}
+
+function radius(t) {
+  if (t <= 3) return R0 * Math.pow(R3 / R0, easeInOutCubic(clamp01(t / 3)));      // exponential zoom
+  // dive: one smooth curve in log space, fast between 3 and 5 s, then still descending gently
+  const l3 = Math.log(R3), l5 = Math.log(R5), l6 = Math.log(R6);
+  if (t <= 5) return Math.exp(hermite(t, 3, l3, 0, 5, l5, 0.6));
+  return Math.exp(hermite(t, 5, l5, 0.6, 6, l6, 0.25));
+}
+function centre(t) {
+  const k = easeInOutCubic(clamp01(t / 3));
+  return [START[0] + (OUAGA[0] - START[0]) * k, START[1] + (OUAGA[1] - START[1]) * k];
+}
+
+function init(w110, w50) {
+  const f = (topo) => ({
+    land: topojson.feature(topo, topo.objects.countries),
+    borders: topojson.mesh(topo, topo.objects.countries, (a, b) => a !== b),
+  });
+  world = { far: f(w110), near: f(w50) };
+  bfFeature = topojson.feature(w50, w50.objects.countries).features.find(c => c.id === "854");
+  if (!bfFeature) throw new Error("Burkina Faso (854) not found in countries-50m");
+}
+
+function slide(t, t0) {          // 12 px glide in 4 frames, no fade
+  return 12 * (1 - easeOutCubic(clamp01((t - t0) / (4 / FPS))));
+}
+
+function seek(t) {
+  const c = centre(t), R = radius(t);
+  const proj = d3.geoOrthographic().translate([W / 2, H / 2]).scale(R).rotate([-c[0], -c[1]]).precision(0.3);
+  const path = d3.geoPath(proj);
+  const set = (id, d) => document.getElementById(id).setAttribute("d", d || "");
+  const data = t < 2.0 ? world.far : world.near;          // 110m far away, 50m as we approach
+  set("sphere", path({ type: "Sphere" }));
+  set("grat", path(d3.geoGraticule10()));
+  set("land", path(data.land));
+  set("borders", path(data.borders));
+
+  // 3.0 s (frame 72): Burkina Faso turns gold, on the beat
+  const bf = document.getElementById("bf");
+  const gold = t >= 72 / FPS - 1e-9;
+  set("bf", gold ? path(bfFeature) : "");
+  bf.setAttribute("stroke", gold ? "#F9A800" : "none");
+  bf.setAttribute("fill", gold ? "rgba(249,168,0,0.18)" : "none");
+
+  // "BURKINA FASO" next to the country, 3.0 s -> 4.5 s (frames 72 -> 108), leaves sharp
+  const lbf = document.getElementById("lbf");
+  if (t >= 72 / FPS - 1e-9 && t < 108 / FPS - 1e-9) {
+    const [[x0, y0], [x1, y1]] = path.bounds(bfFeature);
+    const w = lbf.getComputedTextLength();
+    let x = Math.min(x1 + 28, W - 60 - w), y = (y0 + y1) / 2 + 16;
+    lbf.setAttribute("x", x + slide(t, 72 / FPS));
+    lbf.setAttribute("y", y);
+    lbf.setAttribute("visibility", "visible");
+  } else lbf.setAttribute("visibility", "hidden");
+
+  // 5.0 s (frame 120): the dot on Ouagadougou, and its name under it
+  const p = proj(OUAGA);
+  const dot = document.getElementById("dot"), lo = document.getElementById("louaga");
+  if (t >= 120 / FPS - 1e-9) {
+    dot.setAttribute("cx", p[0]); dot.setAttribute("cy", p[1]); dot.setAttribute("visibility", "visible");
+    lo.setAttribute("x", p[0]); lo.setAttribute("y", p[1] + 66 + slide(t, 120 / FPS));
+    lo.setAttribute("visibility", "visible");
+  } else { dot.setAttribute("visibility", "hidden"); lo.setAttribute("visibility", "hidden"); }
+  return { dot: p, R };
+}
+</script>
+</body>
+</html>

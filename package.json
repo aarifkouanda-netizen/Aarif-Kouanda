@@ -1,0 +1,10 @@
+{
+  "name": "ouverture-globe",
+  "private": true,
+  "description": "Ouverture du film : globe -> Ouagadougou -> circuits",
+  "dependencies": {
+    "d3-geo": "^3.1.1",
+    "topojson-client": "^3.1.0",
+    "world-atlas": "^2.0.2"
+  }
+}
