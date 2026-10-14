@@ -16,9 +16,10 @@ Contexte du projet pour Claude Code. Lis ce fichier en entier avant toute action
 | Montage V2 (53 s, 27 coupes sur 120 BPM) | ✅ livré | `film_eclairage_v2.mp4` (racine du dossier), script `scripts/montage_v2.py` |
 | Piste son provisoire générée par code | ✅ | `son/v2_son.wav`, script `scripts/son_v2.py` |
 | Ouverture, séquence 1 : globe → Ouagadougou (6 s) | ✅ | `rendus/ouverture_globe.mp4`, script `ouverture/render_globe.py` |
-| Ouverture, séquence 2 : circuits (9 s) | ✅ rendue (version de travail, à valider par Amar) | `rendus/ouverture_circuits.mp4` ; fond `fonds/ouaga_large.jpg` (capture `Trace.1t.jpg` de la release, calée sur `Trace.1.jpg`) ; `ouverture/render_circuits.py`, fond calé par `ouverture/caler_fond.py`, géométrie `ouverture/circuits.py`, chiffres `chiffres_circuits.json` |
+| Ouverture, séquence 2 : circuits (9 s) | ✅ V4 : la caméra suit la lumière, plongée finale raccordée au rush de jour | `rendus/ouverture_circuits.mp4` ; fond `fonds/ouaga_large.jpg` (capture `Trace.1t.jpg` de la release, calée sur `Trace.1.jpg`) ; `ouverture/render_circuits.py`, fond calé par `ouverture/caler_fond.py`, géométrie `ouverture/circuits.py`, chiffres `chiffres_circuits.json` |
 | 5 gros plans produit à caméra fixe + 1 plan de vie | ⏳ à générer dans Magnific | voir « À produire » |
-| Montage V3 (nouvelle structure ci-dessous) | ⏳ planche faite, rendu complet en attente de la séquence 2 | `scripts/montage_v3.py` |
+| Montage V3 (nouvelle structure ci-dessous) | ✅ rendu (base de comparaison) | `rendus/film_eclairage_v3.mp4`, `scripts/montage_v3.py`, son `scripts/son_v3.py` |
+| Montage V4, version dynamique (`docs/BRIEF_V4.md`) | ✅ rendu, à valider par Amar | `rendus/film_eclairage_v4.mp4` (copie de visionnage ; master `*_master.mp4` hors Git), `scripts/montage_v4.py`, son `scripts/son_v4.py` |
 
 Correspondance des segments :
 - **C1-S1** : avenue aux drapeaux (grands arbres, haie sur le terre-plein, panneau OMS). Les drapeaux et la haie ont disparu dans la version IA.

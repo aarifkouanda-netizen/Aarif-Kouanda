@@ -41,3 +41,17 @@ tout événement sur un multiple de 12 images (120 BPM) ; le point or porte les 
 - Rythme du jour : nouveaux points d'entrée dans les rushes choisis sur la planche, coupes sur la grille.
 - Contrôles à chaque étape : planche une image par temps, mesure du mouvement (aucune seconde figée hors
   noir voulu et extinction finale), contrôle des sauts d'image, critique notée.
+
+## Réalisé (V4 rendue le 14 octobre 2026)
+Écarts au plan, pour que chaque chiffre reste lisible avant que la caméra reparte : « · 7,2 km » à 9,0 s,
+glissé 9,5–10,0 s, « CIRCUIT 2 » à 10,0 s, « · 4,2 km » à 12,0 s, recul 12,5–13,0 s. Produit : couronne puis
+crosses en un seul mouvement de 4 s (plus de coupe à 32 s), mât remonté du pied au sommet, socle suivi, acier
+révélé en reculant. 27 coupes.
+
+Mesure du mouvement (même méthode que la V3) : plus aucune seconde figée hors extinction finale (V3 : 17) ;
+carte 0,2–8,2 (V3 : 0,0–0,1) ; raccord à 15 s 5,5 → 12,2 (V3 : 0 → 12) ; produit 1,2–13,9 (V3 : 0,5–1,1) ;
+fin 0,9–1,4 (V3 : 0,3–0,4).
+
+Pistes pour une V5 : accroche des 3 premières secondes (globe encore petit) ; étiquettes de la carte à
+agrandir pour le téléphone ; plan de jour de 17 s très agité ; musique définitive et ambiance de rue ;
+gros plans produit Magnific à la place des recadrages.
