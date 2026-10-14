@@ -7,7 +7,8 @@ for f in sys.argv[1:]:
     hop = 256; fr = len(x) // hop
     env = np.array([np.sqrt((x[i * hop:(i + 1) * hop] ** 2).mean()) for i in range(fr)])
     on = np.maximum(0, np.diff(np.log(env + 1e-6))); on -= on.mean()
-    ac = np.correlate(on[:6000], on[:6000], "full")[5999:]
+    n = min(6000, len(on))  # songs shorter than ~70 s have fewer than 6000 onset frames
+    ac = np.correlate(on[:n], on[:n], "full")[n - 1:]
     fps = SR / hop; lags = np.arange(len(ac)) / fps
     best = max(((60 / l, ac[i]) for i, l in enumerate(lags) if 0.33 < l < 1.0), key=lambda z: z[1])
     print(f"\n== {f.split('/')[-1]}  dur {len(x) / SR:.1f}s  BPM~{best[0]:.1f}")

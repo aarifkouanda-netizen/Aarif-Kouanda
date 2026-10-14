@@ -58,6 +58,12 @@ def extract_frames(video: Path, start: float, end: float, n: int, dest_dir: Path
             str(out),
         ]
         subprocess.run(cmd, check=True, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+        # A seek exactly at the end of the file yields no frame: step back a little and retry.
+        for back in (0.1, 0.25, 0.5):
+            if out.exists():
+                break
+            cmd[3] = f"{max(0.0, t - back):.3f}"
+            subprocess.run(cmd, check=True, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
         paths.append(out)
     return paths
 

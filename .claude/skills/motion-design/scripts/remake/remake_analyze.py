@@ -7,6 +7,7 @@ FF = imageio_ffmpeg.get_ffmpeg_exe()
 H = Path(__file__).parent
 ref = H / "ref/reference.mp4"
 full = H / "ref/full"; full.mkdir(parents=True, exist_ok=True)
+(H / "ref/sheet").mkdir(parents=True, exist_ok=True)
 if not any(full.iterdir()):
     subprocess.run([FF, "-v", "error", "-i", str(ref), "-start_number", "0", "-q:v", "3", str(full / "f%04d.jpg")], check=True)
     subprocess.run([FF, "-v", "error", "-y", "-i", str(ref), "-vn", "-ac", "2", "-ar", "48000", str(H / "ref/audio.wav")], check=True)
