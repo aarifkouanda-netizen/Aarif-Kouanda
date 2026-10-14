@@ -69,3 +69,8 @@ moyenne vers 45 %, courbe en S douce, netteté adaptée à l'agrandissement ×1,
 Plan remplacé : C2 à 72 s → C2 à 13 s (approche du monument, motos). De 17 s à la fin, le rush du circuit 2 porte
 un reflet fixe du tableau de bord sur la chaussée, que le contraste rend visible ; un retrait par médiane temporelle
 n'en enlève qu'une partie (le reflet change de forme avec le soleil).
+
+Rendue le 14 octobre 2026 : `rendus/film_eclairage_v5.mp4` (master `film_eclairage_v5_master.mp4` hors Git), 1 440 images,
+27 coupes identiques à la V4 (`rendus/v5_cuts.txt`), son `rendus/v4_son.wav`. Contrôlé sur images extraites de la
+copie envoyée : plus de voile ni de dominante, contours nets, plus de reflet sur la chaussée, volet « AVANT » noir et
+blanc contre « APRÈS » en couleur.

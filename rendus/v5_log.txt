@@ -1,0 +1,2 @@
+durée 60.0 s ; images 1440 ; coupes 27 ; DOT (849, 231) END (934, 388) ; planche 120 vignettes
+exit 0
