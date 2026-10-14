@@ -5,7 +5,8 @@ circuits, une fois sans. Les pixels rouges de la première sont ajustés (transf
 ICP) sur la géométrie des circuits lue dans circuits/ ; la seconde devient le fond, avec un .json
 d'emprise {nord, sud, est, ouest} comme l'attend docs/PROMPT_claude_code_globe.md.
 
-usage: python ouverture/caler_fond.py AVEC_TRACES.jpg SANS_TRACES.jpg fonds/NOM.jpg
+usage: python ouverture/caler_fond.py AVEC_TRACES.jpg SANS_TRACES.jpg fonds/NOM.jpg [--largeur PX]
+  --largeur : réduit le fond redressé à cette largeur (une capture de 8192 px est plus fine que le cadre)
 """
 import json
 import shutil
@@ -15,18 +16,20 @@ from pathlib import Path
 import numpy as np
 from PIL import Image
 
+Image.MAX_IMAGE_PIXELS = None          # captures « Maximum » de Google Earth : 8192 px et plus
 sys.path.insert(0, str(Path(__file__).resolve().parent))
-from circuits import circuit1, circuit2, densify  # noqa: E402
+from circuits import KX, circuit1, circuit2, densify  # noqa: E402
 
 avec, sans, sortie = map(Path, sys.argv[1:4])
-A = np.asarray(Image.open(avec).convert("RGB")).astype(int)
-B = np.asarray(Image.open(sans).convert("RGB")).astype(int)
+A = np.asarray(Image.open(avec).convert("RGB")).astype(np.int16)
+B = np.asarray(Image.open(sans).convert("RGB")).astype(np.int16)
 if A.shape != B.shape:
     sys.exit(f"les deux captures n'ont pas la même taille : {A.shape[1]}x{A.shape[0]} et {B.shape[1]}x{B.shape[0]}")
 h, w = A.shape[:2]
 
 # pixels du tracé rouge : rouges sur la première capture, absents de la seconde
-red = (A[..., 0] > 150) & (A[..., 1] < 100) & (A[..., 2] < 100) & (np.abs(A - B).sum(axis=2) > 120)
+red = (A[..., 0] > 150) & (A[..., 1] < 100) & (A[..., 2] < 100) & (np.abs(A - B).sum(axis=2, dtype=np.int16) > 120)
+del B
 ry, rx = np.nonzero(red)
 P = np.stack([rx, ry], 1).astype(float)
 print(f"capture {w}x{h} ; {len(P)} pixels de tracé rouge")
@@ -62,7 +65,8 @@ def nearest(M):
         d = ((Q[k:k + 128, None, :] - P[None, :, :]) ** 2).sum(-1)
         idx[k:k + 128] = d.argmin(1); dist[k:k + 128] = np.sqrt(d.min(1))
     return idx, dist
-for seuil in (80, 50, 30, 20, 12, 8, 5, 3):
+K = max(1.0, w / 1024)                   # seuils pensés pour une capture de 1024 px
+for seuil in [v * K for v in (80, 50, 30, 20, 12, 8)] + [8, 5, 3]:
     for it in range(15):
         idx, dist = nearest(M); keep = dist < seuil
         sw = np.sqrt(weight[keep])[:, None]
@@ -73,7 +77,9 @@ for seuil in (80, 50, 30, 20, 12, 8, 5, 3):
         if done:
             break
 idx, dist = nearest(M)
-print(f"calage : écart médian {np.median(dist):.2f} px, 95 % sous {np.percentile(dist, 95):.2f} px, max {dist.max():.1f} px")
+MPP = KX / np.hypot(*M[0])              # mètres par pixel de la capture
+print(f"calage : écart médian {np.median(dist):.2f} px, 95 % sous {np.percentile(dist, 95):.2f} px, max {dist.max():.1f} px "
+      f"(capture à {MPP:.1f} m/px : max {dist.max() * MPP:.0f} m)")
 
 # la vue de Google Earth peut être légèrement tournée : rotation lue sur chacun des deux axes
 ax, ay = M[0], M[1]          # dérivées de (x, y) par rapport à lon et à lat
@@ -81,8 +87,8 @@ rot_lon = np.degrees(np.arctan2(ax[1], ax[0])); rot_lat = np.degrees(np.arctan2(
 print(f"rotation de la vue : {rot_lon:.2f}° (axe est-ouest), {rot_lat:.2f}° (axe nord-sud)")
 # Une vue inclinée déforme l'image en trapèze, ce qu'une affine ne rattrape pas : l'écart de calage
 # grandit alors. Tant qu'il reste faible, l'affine corrige aussi le léger cisaillement.
-if dist.max() > 3:
-    sys.exit("calage imprécis (écart > 3 px) : vue inclinée ? Remettre la vue à plat (touche U) et refaire les captures")
+if dist.max() > max(3, 40 / MPP):
+    sys.exit("calage imprécis (écart > 3 px et > 40 m) : vue inclinée ? Remettre la vue à plat (touche U) et refaire les captures")
 
 # On redresse la capture nord en haut : la plus grande emprise lon/lat contenue dans l'image,
 # rééchantillonnée à la même résolution. Chaque pixel de sortie va chercher son pixel source par M.
@@ -96,6 +102,9 @@ du, dv = (est - ouest) / ow, -(nord - sud) / oh
 # (u, v) -> (lon, lat) = (ouest + u du, nord + v dv) -> (x, y) = [lon, lat, 1] @ M
 a, d_ = M[0] * du; b, e_ = M[1] * dv; c, f = np.array([ouest, nord, 1.0]) @ M
 img = Image.open(sans).convert("RGB").transform((ow, oh), Image.AFFINE, (a, b, c, d_, e_, f), resample=Image.BICUBIC)
+if "--largeur" in sys.argv and ow > int(sys.argv[sys.argv.index("--largeur") + 1]):
+    lw = int(sys.argv[sys.argv.index("--largeur") + 1])
+    ow, oh = lw, int(round(oh * lw / ow)); img = img.resize((ow, oh), Image.LANCZOS)
 emprise = {"nord": round(float(nord), 7), "sud": round(float(sud), 7),
            "est": round(float(est), 7), "ouest": round(float(ouest), 7),
            "largeur_px": ow, "hauteur_px": oh,

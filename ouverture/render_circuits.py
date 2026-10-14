@@ -33,7 +33,7 @@ OUAGA = np.array([-1.5197, 12.3714])             # le point du globe (globe.html
 MARGE_M = 450                                    # marge autour des deux circuits, en mètres
 OUT = ROOT / "rendus"
 apercu = "--apercu" in sys.argv
-fond = ROOT / (sys.argv[sys.argv.index("--fond") + 1] if "--fond" in sys.argv else "fonds/ouaga_large_1024.jpg")
+fond = ROOT / (sys.argv[sys.argv.index("--fond") + 1] if "--fond" in sys.argv else "fonds/ouaga_large.jpg")
 emp = json.loads(fond.with_suffix(".json").read_text(encoding="utf-8"))
 chiffres = json.loads((ROOT / "chiffres_circuits.json").read_text(encoding="utf-8"))
 km = lambda v: f"{v:.1f}".replace(".", ",")
