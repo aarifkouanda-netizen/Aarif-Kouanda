@@ -10,5 +10,28 @@
     "ecart_max_px": 14.25,
     "rotation_corrigee_deg": -0.557,
     "source": "Trace.1.jpg (tracés rouges) ajusté sur circuits/*.kmz, Trace.1t.jpg redressée"
-  }
+  },
+  "jonctions": [
+    {
+      "x_haut": 3040,
+      "x_bas": 3040,
+      "fondu_px": 300,
+      "moyenne_gauche": [
+        153.37,
+        133.31,
+        121.53
+      ],
+      "moyenne_droite": [
+        146.38,
+        123.17,
+        108.47
+      ],
+      "contraste_droite": [
+        1.0681,
+        0.9943,
+        0.9428
+      ],
+      "note": "raccord entre deux prises de vue Google, mesuré sur le fond redressé (bandes de 280 px de chaque côté)"
+    }
+  ]
 }

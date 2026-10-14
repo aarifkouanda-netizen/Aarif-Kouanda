@@ -65,6 +65,15 @@ def scr(ll, off=(0.0, 0.0)):
 
 # ---------- fond satellite : traitement de plan7 (moyenne, contraste et saturation mesurés sur plan7)
 raw = np.asarray(Image.open(fond).convert("RGB")).astype(np.float32)
+# raccords entre prises de vue (mesurés dans le .json) : le côté droit prend la moyenne et le contraste
+# du côté gauche, canal par canal, avec un fondu sur la largeur indiquée
+for j in emp.get("jonctions", []):
+    hh, ww = raw.shape[:2]
+    xs = j["x_haut"] + (j["x_bas"] - j["x_haut"]) * np.arange(hh)[:, None] / (hh - 1)
+    k = np.clip((np.arange(ww)[None, :] - xs) / j["fondu_px"] + 0.5, 0, 1)
+    k = (k * k * (3 - 2 * k))[..., None]
+    mL, mR = np.array(j["moyenne_gauche"], np.float32), np.array(j["moyenne_droite"], np.float32)
+    raw = raw + k * ((raw - mR) * np.array(j["contraste_droite"], np.float32) + mL - raw)   # moyenne et contraste du côté gauche
 g = raw.mean(axis=2, keepdims=True); a = g + (raw - g) * 0.48
 a = np.array([74.0, 68.9, 60.4]) + (a - a.reshape(-1, 3).mean(0)) * (18.0 / max(g.std(), 1e-6))
 sat = Image.fromarray(np.clip(a, 0, 255).astype(np.uint8))
