@@ -81,7 +81,8 @@ Points de coupe repérés dans les clips de nuit (temps dans la source) :
 - Ne jamais présenter un défaut comme réglé sans l'avoir vu sur une image extraite.
 - Garder les rendus dans `rendus/`, versionnés (`film_eclairage_v3.mp4`, …).
 
-## Skills installés (`.claude/skills/`, versions dans `skills-lock.json`)
+## Skills installés (`.claude/skills/` ; versions dans `skills-lock.json`, sauf motion-design)
 - **video-use** (browser-use/video-use) et les **21 skills HyperFrames** (heygen-com/hyperframes), installés à la demande d'Amar le 14 octobre 2026 avec `npx skills add … --agent claude-code`. Mise à jour : `npx skills update -p`.
+- **motion-design** (howseen-ai/claude-motion-design, commit 3d90d34) : copié à la main dans `.claude/skills/motion-design/` comme le demande son README, car `npx skills` refuse son en-tête YAML ; seule la description a été mise en bloc YAML valide, texte inchangé. Absent de `skills-lock.json` : pour le mettre à jour, recopier `skill/motion-design` depuis le dépôt et refaire cette correction. C'est le pipeline personnel d'un autre studio (Howseen) : ignorer ses dossiers, palette, polices et règles de marque Howseen. Dépendance en plus : `pip install imageio-ffmpeg`.
 - Ce fichier prime sur leurs consignes : rendus dans `rendus/` (pas `edit/`), charte et grille de 12 images inchangées, chaîne de montage Python actuelle conservée sauf si Amar demande de passer une séquence en HyperFrames.
 - video-use n'a besoin d'une clé ElevenLabs que pour transcrire de la parole : le film n'en a pas. Dépendances Python (librosa, matplotlib) à réinstaller dans chaque nouvel environnement cloud : `pip install requests librosa matplotlib`. HyperFrames s'exécute avec `npx --yes hyperframes …` (Node 22).
