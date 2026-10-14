@@ -34,7 +34,7 @@ tout événement sur un multiple de 12 images (120 BPM) ; le point or porte les 
 | 58,5–60 s | Extinction | Inchangée : tout s'éteint sauf une lampe. |
 
 ## Technique
-- Carte : fond satellite gardé à 6000 px (3,5 m/px) pour zoomer jusqu'à ×2,3 sans flou ; caméra en
+- Carte : fond satellite en pleine résolution (8104 px, 2,6 m/px) pour zoomer jusqu'à ×3,5 sans flou ; caméra en
   segments adoucis, zoom interpolé en échelle logarithmique ; flou de mouvement par sous-images sur les
   mouvements rapides seulement.
 - Raccord carte → rue : coupe au pic de vitesse, même sens de mouvement des deux côtés.
