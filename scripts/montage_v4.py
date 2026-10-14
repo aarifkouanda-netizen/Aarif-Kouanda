@@ -4,7 +4,8 @@
    6–15 s  les circuits          rendus/ouverture_circuits.mp4 (la caméra suit la lumière, plongée finale)
   15–23 s  le jour               rafale qui accélère : 2 · 1,5 · 1,5 · 1 · 1 · 0,5 · 0,5 s (×2, désaturé 50 %)
   23–30 s  la bascule            noir, clac, point or -> tête LED (C2-S1), volet avant/après ralenti avec poussée
-  30–40 s  le produit            5 détails sur images qui bougent : vitesse réelle puis ralenti à 25 % en poussant
+  30–40 s  le produit            images qui bougent : vitesse réelle puis ralenti en allant chercher le détail
+                                 (couronne puis crosses en un seul mouvement, mât remonté, acier révélé en reculant)
   40–55 s  la ville la nuit      coupes mât à mât, ralenti au passage d'une couronne, compteur agrandi
   55–60 s  la fin                titre en grand sur image qui bouge, puis tout s'éteint sauf une lampe
 
@@ -115,34 +116,51 @@ for fd, fn in zip(dayg, nig):
         txt(im, (x-24, 880), "AVANT", font("SemiBold", 30), WHITE, 1, "rm"); txt(im, (x+24, 880), "APRÈS", font("SemiBold", 30), GOLD, 1, "lm")
     emit(push(im, 1 + 0.05 * t / 4.0))
 
-# ---------- 30–40 s · le produit : chaque détail sur image qui bouge. 0,5 s à vitesse réelle en plan large, puis
-# ralenti jusqu'à 25 % en poussant vers le détail ; le moment net du détail tombe vers 1 s, le mot au temps.
-HI = 96                                                                        # cadence interpolée (4 x 24)
-def src_time(tau):
-    """Temps source écoulé (s) après tau secondes de plan : vitesse 1 jusqu'à 0,5 s, descente douce à 0,25 à 1 s."""
+# ---------- 30–40 s · le produit sur images qui bougent : vitesse réelle 0,5 s, puis ralenti (jusqu'à 25 % ou 15 %)
+# pendant que le cadre va chercher le détail. Couronne puis crosses : un seul mouvement continu de 4 s ; le mât
+# se remonte du pied au sommet ; l'acier se révèle en reculant sur le lampadaire entier. Un mot par temps fort.
+def src_time(tau, vmin):
+    """Temps source écoulé après tau secondes de plan : vitesse 1 jusqu'à 0,5 s, descente douce à vmin à 1 s."""
     if tau <= 0.5: return tau
     u = min(1.0, (tau - 0.5) / 0.5)
-    integ = u - 0.75 * (u ** 3 - u ** 4 / 2)                                   # intégrale de 1 - 0,75 * smoothstep
-    base = 0.5 + 0.5 * integ
-    return base if tau <= 1.0 else 0.5 + 0.5 * (1 - 0.75 * 0.5) + 0.25 * (tau - 1.0)
-shots = [("C1-S1", 3.25, rect(610, 230, 760), "COURONNE EN DENTELLE LED", (W / 2, 930)),
-         ("C1-S1", 3.25, rect(905, 150, 460), "DOUBLE CROSSE · 4,5 M",   (W / 2, 930)),
-         ("C1-S3", 0.75, rect(880, 214, 760), "MÂT DE 10 À 12 M",        (W * 0.74, 930)),
-         ("C1-S3", 2.0,  rect(520, 820, 760), "SOCLE ÉCLAIRÉ · 1,3 M",   (W / 2, 150)),
-         ("C1-S1", 2.5,  rect(960, 540, 1920), "ACIER GALVANISÉ",        (W / 2, 930))]
-for clip, t_detail, b, label, (lx, ly) in shots:
+    base = 0.5 + 0.5 * (u - (1 - vmin) * (u ** 3 - u ** 4 / 2))              # intégrale de 1 - (1 - vmin) * smoothstep
+    return base + vmin * max(0.0, tau - 1.0)
+FULL = (0.0, 0.0, float(W))
+def crop_at(keys, tau):
+    """Cadre (x0, y0, largeur) interpolé entre des clés (temps, cadre), courbe douce dans chaque segment."""
+    if tau <= keys[0][0]: return keys[0][1]
+    for (t0, r0), (t1, r1) in zip(keys[:-1], keys[1:]):
+        if tau <= t1:
+            k = (tau - t0) / (t1 - t0); k = k * k * (3 - 2 * k)
+            return tuple(r0[j] + (r1[j] - r0[j]) * k for j in range(3))
+    return keys[-1][1]
+def tighter(r, f):                                                           # même centre, cadre plus serré
+    cx, cy = r[0] + r[2] / 2, r[1] + r[2] * 9 / 32; return rect(cx, cy, r[2] * f)
+COUR, CROS = rect(610, 230, 760), rect(905, 150, 460)
+MAT_A, MAT_B = rect(880, 760, 760), rect(880, 214, 760)
+SOCLE, ACIER_A = rect(520, 820, 760), rect(700, 600, 1100)
+product = [  # (clip, temps du détail, instant du plan où il tombe, durée, vitesse mini, clés de cadre, mots)
+    ("C1-S1", 3.25, 2.0, 4.0, 0.15, [(0, FULL), (1.2, COUR), (2.0, COUR), (2.8, CROS), (4.0, tighter(CROS, 0.96))],
+     [(0.5, 2.0, "COURONNE EN DENTELLE LED", (W / 2, 930)), (2.5, 4.0, "DOUBLE CROSSE · 4,5 M", (W / 2, 930))]),
+    ("C1-S3", 0.75, 1.0, 2.0, 0.25, [(0, MAT_A), (1.6, MAT_B), (2.0, MAT_B)],
+     [(0.5, 2.0, "MÂT DE 10 À 12 M", (W * 0.74, 930))]),
+    ("C1-S3", 1.85, 1.0, 2.0, 0.15, [(0, FULL), (1.0, SOCLE), (2.0, rect(365, 830, 730))],   # le cadre suit le socle qui file à gauche
+     [(0.5, 2.0, "SOCLE ÉCLAIRÉ · 1,3 M", (W / 2, 150))]),
+    ("C1-S1", 2.5, 1.0, 2.0, 0.25, [(0, ACIER_A), (1.6, FULL), (2.0, FULL)],
+     [(0.5, 2.0, "ACIER GALVANISÉ", (W / 2, 930))]),
+]
+for clip, t_detail, t_land, dur, vmin, keys, words in product:
     cut()
-    start = max(0.0, t_detail - src_time(1.0))                               # le détail net tombe à 1 s du plan
-    span = src_time(2.0) + 0.1
-    hi = frames_hi(N + f"{clip}_nuit_seedance_v1.mov", start, span, NIGHT + f",minterpolate=fps={HI}:mi_mode=mci", HI)
-    for i in range(int(2.0 * FPS)):
-        tau = i / FPS; src = grade(hi[min(len(hi) - 1, int(round(src_time(tau) * HI)))])
-        k = ease(min(1.0, tau / 1.0)); k = k * k * (3 - 2 * k)                # du plan large au détail, puis il reste
-        x0, y0, w = [0 + (b[0] - 0) * k, 0 + (b[1] - 0) * k, W + (b[2] - W) * k]
-        w *= 1 - 0.04 * max(0.0, tau - 1.0)                                    # la poussée continue doucement
-        h = w * 9 / 16; x0 = min(max(x0, 0), W - w); y0 = min(max(y0, 0), H - h)
+    hi_fps = int(round(24 / vmin / 24)) * 24                                  # assez d'images pour le ralenti le plus lent
+    start = max(0.0, t_detail - src_time(t_land, vmin))
+    hi = frames_hi(N + f"{clip}_nuit_seedance_v1.mov", start, src_time(dur, vmin) + 0.1,
+                   NIGHT + f",minterpolate=fps={hi_fps}:mi_mode=mci", hi_fps)
+    for i in range(int(dur * FPS)):
+        tau = i / FPS; src = grade(hi[min(len(hi) - 1, int(round(src_time(tau, vmin) * hi_fps)))])
+        x0, y0, w = crop_at(keys, tau); h = w * 9 / 16; x0 = min(max(x0, 0), W - w); y0 = min(max(y0, 0), H - h)
         im = src.crop((int(x0), int(y0), int(x0 + w), int(y0 + h))).resize((W, H), Image.BICUBIC)
-        word_at(im, tau, 0.5, 2.0, label, 84, GOLD, lx, ly); emit(im)
+        for w0, w1, label, (lx, ly) in words: word_at(im, tau, w0, w1, label, 84, GOLD, lx, ly)
+        emit(im)
 
 # ---------- 40–55 s · la ville la nuit, mât à mât (inchangé, compteur agrandi)
 pieces = [
