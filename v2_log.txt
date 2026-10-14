@@ -1,0 +1,2 @@
+durée 53.0 s ; coupes 27 DOT (849, 231) END (906, 38)
+exit 0
