@@ -31,6 +31,8 @@ let world = null, bfFeature = null;
 const clamp01 = x => Math.max(0, Math.min(1, x));
 const easeInOutCubic = x => x < 0.5 ? 4 * x * x * x : 1 - Math.pow(-2 * x + 2, 3) / 2;
 const easeOutCubic = x => 1 - Math.pow(1 - x, 3);
+// V4: the opening starts already in motion (no dead first second) and still settles smoothly at 3 s
+const easeLaunch = x => 0.5 * (1 - (1 - x) * (1 - x)) + 0.5 * easeInOutCubic(x);
 // cubic Hermite between (t0, y0, slope m0) and (t1, y1, slope m1)
 function hermite(t, t0, y0, m0, t1, y1, m1) {
   const h = t1 - t0, u = (t - t0) / h, u2 = u * u, u3 = u2 * u;
@@ -38,14 +40,14 @@ function hermite(t, t0, y0, m0, t1, y1, m1) {
 }
 
 function radius(t) {
-  if (t <= 3) return R0 * Math.pow(R3 / R0, easeInOutCubic(clamp01(t / 3)));      // exponential zoom
+  if (t <= 3) return R0 * Math.pow(R3 / R0, easeLaunch(clamp01(t / 3)));      // exponential zoom
   // dive: one smooth curve in log space, fast between 3 and 5 s, then still descending gently
   const l3 = Math.log(R3), l5 = Math.log(R5), l6 = Math.log(R6);
   if (t <= 5) return Math.exp(hermite(t, 3, l3, 0, 5, l5, 0.6));
   return Math.exp(hermite(t, 5, l5, 0.6, 6, l6, 0.25));
 }
 function centre(t) {
-  const k = easeInOutCubic(clamp01(t / 3));
+  const k = easeLaunch(clamp01(t / 3));
   return [START[0] + (OUAGA[0] - START[0]) * k, START[1] + (OUAGA[1] - START[1]) * k];
 }
 

@@ -7,6 +7,7 @@ d'emprise {nord, sud, est, ouest} comme l'attend docs/PROMPT_claude_code_globe.m
 
 usage: python ouverture/caler_fond.py AVEC_TRACES.jpg SANS_TRACES.jpg fonds/NOM.jpg [--largeur PX]
   --largeur : réduit le fond redressé à cette largeur (une capture de 8192 px est plus fine que le cadre)
+  --qualite : qualité JPEG du fond (95 par défaut)
 """
 import json
 import shutil
@@ -112,6 +113,6 @@ emprise = {"nord": round(float(nord), 7), "sud": round(float(sud), 7),
                       "rotation_corrigee_deg": round(float(rot_lon), 3),
                       "source": f"{avec.name} (tracés rouges) ajusté sur circuits/*.kmz, {sans.name} redressée"}}
 sortie.parent.mkdir(parents=True, exist_ok=True)
-img.save(sortie, quality=95)
+img.save(sortie, quality=int(sys.argv[sys.argv.index("--qualite") + 1]) if "--qualite" in sys.argv else 95)
 sortie.with_suffix(".json").write_text(json.dumps(emprise, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
 print(json.dumps(emprise, ensure_ascii=False))

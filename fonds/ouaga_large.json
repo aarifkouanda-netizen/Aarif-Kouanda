@@ -3,8 +3,8 @@
   "sud": 12.2574707,
   "est": -1.4050195,
   "ouest": -1.600348,
-  "largeur_px": 4000,
-  "hauteur_px": 3103,
+  "largeur_px": 8104,
+  "hauteur_px": 6286,
   "calage": {
     "ecart_median_px": 0.88,
     "ecart_max_px": 14.25,
@@ -13,9 +13,9 @@
   },
   "jonctions": [
     {
-      "x_haut": 3040,
-      "x_bas": 3040,
-      "fondu_px": 300,
+      "x_haut": 6159,
+      "x_bas": 6159,
+      "fondu_px": 608,
       "moyenne_gauche": [
         153.37,
         133.31,
