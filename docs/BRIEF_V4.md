@@ -55,3 +55,17 @@ fin 0,9–1,4 (V3 : 0,3–0,4).
 Pistes pour une V5 : accroche des 3 premières secondes (globe encore petit) ; étiquettes de la carte à
 agrandir pour le téléphone ; plan de jour de 17 s très agité ; musique définitive et ambiance de rue ;
 gros plans produit Magnific à la place des recadrages.
+
+## V5 : l'existant en noir et blanc (demande d'Amar, 14 octobre 2026)
+Amar valide la V4 et demande d'améliorer les images de l'existant (« un peu floues ou trop exposées ») et de les
+passer en gris. Seules changent les images de jour : rafale de 15 à 23 s et côté « AVANT » du volet (26–29 s).
+Coupes, durées, textes et son inchangés.
+
+Traitement (`scripts/existant.py`), un réglage par plan calculé sur quelques images (pas de scintillement) :
+débruitage léger avant l'agrandissement, noir et blanc façon filtre orange (le voile bleuté du ciel s'assombrit),
+noir au 0,5e centile relevé à 7 % (anthracite), blanc au 99,7e centile plafonné à 92 %, gamma qui ramène la valeur
+moyenne vers 45 %, courbe en S douce, netteté adaptée à l'agrandissement ×1,85, grain fin déterministe.
+
+Plan remplacé : C2 à 72 s → C2 à 13 s (approche du monument, motos). De 17 s à la fin, le rush du circuit 2 porte
+un reflet fixe du tableau de bord sur la chaussée, que le contraste rend visible ; un retrait par médiane temporelle
+n'en enlève qu'une partie (le reflet change de forme avec le soleil).

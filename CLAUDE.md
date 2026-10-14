@@ -19,7 +19,8 @@ Contexte du projet pour Claude Code. Lis ce fichier en entier avant toute action
 | Ouverture, séquence 2 : circuits (9 s) | ✅ V4 : la caméra suit la lumière, plongée finale raccordée au rush de jour | `rendus/ouverture_circuits.mp4` ; fond `fonds/ouaga_large.jpg` (capture `Trace.1t.jpg` de la release, calée sur `Trace.1.jpg`) ; `ouverture/render_circuits.py`, fond calé par `ouverture/caler_fond.py`, géométrie `ouverture/circuits.py`, chiffres `chiffres_circuits.json` |
 | 5 gros plans produit à caméra fixe + 1 plan de vie | ⏳ à générer dans Magnific | voir « À produire » |
 | Montage V3 (nouvelle structure ci-dessous) | ✅ rendu (base de comparaison) | `rendus/film_eclairage_v3.mp4`, `scripts/montage_v3.py`, son `scripts/son_v3.py` |
-| Montage V4, version dynamique (`docs/BRIEF_V4.md`) | ✅ rendu, à valider par Amar | `rendus/film_eclairage_v4.mp4` (copie de visionnage ; master `*_master.mp4` hors Git), `scripts/montage_v4.py`, son `scripts/son_v4.py` |
+| Montage V4, version dynamique (`docs/BRIEF_V4.md`) | ✅ validé par Amar (14 octobre 2026) | `rendus/film_eclairage_v4.mp4` (copie de visionnage ; master `*_master.mp4` hors Git), `scripts/montage_v4.py`, son `scripts/son_v4.py` |
+| Montage V5 : la V4 avec l'existant (plans de jour) en noir et blanc net et dense | ✅ rendu, à valider par Amar | `rendus/film_eclairage_v5.mp4` (master hors Git), `scripts/montage_v5.py`, traitement `scripts/existant.py` ; son : celui de la V4 (`rendus/v4_son.wav`, mêmes coupes) |
 
 Correspondance des segments :
 - **C1-S1** : avenue aux drapeaux (grands arbres, haie sur le terre-plein, panneau OMS). Les drapeaux et la haie ont disparu dans la version IA.
@@ -31,6 +32,7 @@ Rushes d'origine (de jour, tournés au téléphone en voiture) à placer dans `s
 - `Ensemble_1_-_2_minutes_-_version_nettoyee.mp4` (circuit 1, 1920×584, 30 i/s, sans son)
 - `Circuit_complet_-_1_min_30_-_variations_de_vitesse.mp4` (circuit 2, 1396×584, 30 i/s, avec des rampes de vitesse)
 Recadrage 16:9 utilisé : circuit 1 `crop=1038:584:371:0`, circuit 2 `crop=1038:584:180:0`.
+⚠️ Rush du circuit 2 : de 17 s à la fin, un reflet fixe du tableau de bord marque le bas de l'image (chaussée). Il ne s'efface pas proprement (il change de forme avec le soleil) et le noir et blanc contrasté le fait ressortir : pour un plan de jour, ne prendre que 0–16 s (avenue vers le monument).
 
 ## Chiffres (ne jamais en inventer)
 - Circuit 1 : **7,2 km**. Circuit 2 : **4,2 km**, dont environ 1,9 km d'anneau autour du monument. Total : **11,4 km**.
@@ -42,6 +44,7 @@ Recadrage 16:9 utilisé : circuit 1 `crop=1038:584:371:0`, circuit 2 `crop=1038:
 - Couleurs : anthracite RAL 7016 `#383E42` (fonds de carte), gris aluminium RAL 9006 `#A5A5A5` (contexte), or RAL 1003 `#F9A800` (circuits, points, accents), blanc cassé `#F0F0EC` (texte). Fond des plans graphiques `#1B2023`.
 - Police : **Inter** (Bold et SemiBold pour les titres, Regular pour le texte). Les mots arrivent par un glissement de 24 px en 4 images, sans fondu, et partent net.
 - Étalonnage commun des plans vidéo : noirs relevés vers l'anthracite, vignettage léger ; sur les plans Seedance, `deband` + grain léger (le ciel a des bandes de compression).
+- L'existant (images de jour, situation actuelle) est en **noir et blanc** depuis la V5, à la demande d'Amar : `scripts/existant.py` (filtre orange, niveaux et gamma calculés par plan, courbe en S douce, noirs à 7 %, netteté, grain fin). La nuit reste en couleur : le noir et blanc du jour fait ressortir l'or des lampes.
 - **Interdits** (retenus de prompt-motion.com) : fondus enchaînés, halos et lueurs, particules, anneaux qui s'étendent, dégradés décoratifs, rebonds, tremblement de caméra, texte dans les coins, temps mort de plus d'1 s sans texte à lire, et tout ce qui ressemble à un modèle tout fait.
 - **Fil conducteur** : un point or qui porte les transitions. Ouagadougou sur le globe devient la fenêtre de la carte, puis une tête LED, puis la dernière lampe allumée.
 
@@ -53,7 +56,7 @@ Musique à **120 BPM** : 1 temps = 0,5 s = **12 images**, 1 mesure = 2 s. Toute 
 |---|---|---|
 | 0–6 s | **Le globe** : rotation vers l'Afrique, le Burkina passe en or, plongée, point or sur Ouagadougou | à produire, voir `docs/PROMPT_claude_code_globe.md` |
 | 6–15 s | **Les circuits** : le point s'ouvre sur la vue satellite, circuit 1 puis circuit 2, total | idem (une seule vue satellite couvrant les deux circuits) |
-| 15–23 s | **Le jour** : rafale de 4 à 6 plans de jour de 1,5 s, accélérés ×2, désaturés à 50 %, sans texte | `sources/` |
+| 15–23 s | **Le jour** : rafale de 4 à 6 plans de jour de 1,5 s, accélérés ×2, en noir et blanc (V5), sans texte | `sources/` |
 | 23–30 s | **La bascule** : 0,5 s de noir et de silence, clac, le point or devient une tête LED (C2-S1 de nuit, 2 s), puis le **volet unique** avant/après sur C1-S1, ralenti à 50 % (4 s), avec « AVANT »/« APRÈS » portés par le trait | `nuit/`, `plaques/` |
 | 30–40 s | **Le produit** : 5 détails de 2 s (couronne, crosse, mât, socle, mât entier) avec un mot sur le temps | aujourd'hui des recadrages de plans de nuit ; à remplacer par les gros plans à caméra fixe |
 | 40–55 s | **La ville la nuit** : coupes quand un mât passe au même endroit du cadre, ralenti à 40 % au passage d'une couronne, compteur « KM ÉCLAIRÉS » qui monte par paliers, « CIRCUIT 1 » / « CIRCUIT 2 » | `nuit/` |
